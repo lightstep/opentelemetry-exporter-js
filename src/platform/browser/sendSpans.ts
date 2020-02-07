@@ -10,7 +10,7 @@ export function sendSpans(
   onSuccess: () => void,
   onError: (status?: number) => void
 ) {
-  if (typeof navigator.sendBeacon !== 'function') {
+  if (typeof navigator.sendBeacon === 'function') {
     sendSpansWithBeacon(buffer, urlToSend, onSuccess, onError);
   } else {
     sendSpansWithXhr(buffer, urlToSend, onSuccess, onError);
