@@ -21,12 +21,12 @@ import * as opentelemetry from '@opentelemetry/api';
 import { SimpleSpanProcessor } from '@opentelemetry/tracing';
 import { WebTracerProvider } from '@opentelemetry/web';
 import { ZoneScopeManager } from '@opentelemetry/scope-zone';
-const { OpenTelemetryExporter } = require('lightstep-opentelemetry-exporter');
+const { LightstepExporter } = require('lightstep-opentelemetry-exporter');
 
 const provider = new WebTracerProvider({
   scopeManager: new ZoneScopeManager(),
 });
-provider.addSpanProcessor(new SimpleSpanProcessor(new OpenTelemetryExporter({
+provider.addSpanProcessor(new SimpleSpanProcessor(new LightstepExporter({
   token: 'YOUR_TOKEN'
 })));
 opentelemetry.trace.initGlobalTracerProvider(provider);
@@ -43,10 +43,10 @@ main.end();
 
 const opentelemetry = require('@opentelemetry/api');
 const { BasicTracerProvider, SimpleSpanProcessor } = require('@opentelemetry/tracing');
-const { OpenTelemetryExporter } = require('lightstep-opentelemetry-exporter');
+const { LightstepExporter } = require('lightstep-opentelemetry-exporter');
 
 const provider = new BasicTracerProvider();
-provider.addSpanProcessor(new SimpleSpanProcessor(new OpenTelemetryExporter({
+provider.addSpanProcessor(new SimpleSpanProcessor(new LightstepExporter({
   token: 'YOUR_TOKEN'
 })));
 
