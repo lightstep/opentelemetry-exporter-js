@@ -3,13 +3,13 @@ import * as opentelemetry from '@opentelemetry/api';
 import { ConsoleSpanExporter, SimpleSpanProcessor } from '@opentelemetry/tracing';
 import { WebTracerProvider } from '@opentelemetry/web';
 import { ZoneScopeManager } from '@opentelemetry/scope-zone';
-const { OpenTelemetryExporter } = require('../build/src/index');
+const { LightstepExporter } = require('../build/src/index');
 
 const provider = new WebTracerProvider({
   scopeManager: new ZoneScopeManager(),
 });
 provider.addSpanProcessor(new SimpleSpanProcessor(new ConsoleSpanExporter()));
-provider.addSpanProcessor(new SimpleSpanProcessor(new OpenTelemetryExporter({
+provider.addSpanProcessor(new SimpleSpanProcessor(new LightstepExporter({
   token: 'YOUR_TOKEN'
 })));
 opentelemetry.trace.initGlobalTracerProvider(provider);

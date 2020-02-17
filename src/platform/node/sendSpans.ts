@@ -42,6 +42,6 @@ export function sendSpans(
   req.on('error', (error: Error) => {
     onError();
   });
-  req.write(new Buffer(buffer));
+  req.write(Buffer.from(buffer));
   req.end();
 }

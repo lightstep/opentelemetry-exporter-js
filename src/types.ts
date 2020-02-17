@@ -1,3 +1,5 @@
+export interface AuthProto {}
+
 export interface KeyValueProto {
   setKey: Function;
   setStringValue: Function;

@@ -9,6 +9,16 @@ const proto = require('./generated_proto/collector_pb.js');
 const googleProtoBufTimestampPB = require('google-protobuf/google/protobuf/timestamp_pb.js');
 
 /**
+ * create new auth proto based on token
+ * @param token
+ */
+export function createAuthProto(token: string): lsTypes.AuthProto {
+  const authProto = new proto.Auth();
+  authProto.setAccessToken(token);
+  return authProto;
+}
+
+/**
  * convert spans to protobuf
  * @param runtimeGUID
  * @param serviceName
@@ -23,14 +33,12 @@ export function toBuffer(
   serviceName: string,
   version: string,
   attributes: { [key: string]: any },
-  token: string,
+  authProto: lsTypes.AuthProto,
   startTime: HrTime,
   spans: lsTypes.SpanProto[]
 ): Uint8Array {
   const reportProto: lsTypes.ReportRequestProto = new proto.ReportRequest();
 
-  const authProto = new proto.Auth();
-  authProto.setAccessToken(token);
   reportProto.setAuth(authProto);
 
   reportProto.setReporter(

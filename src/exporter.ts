@@ -1,6 +1,6 @@
 import { ExportResult } from '@opentelemetry/base';
 import { ReadableSpan, SpanExporter } from '@opentelemetry/tracing';
-import { toSpan, toBuffer } from './transform';
+import { toSpan, toBuffer, createAuthProto } from './transform';
 import { PLATFORM, sendSpans } from './platform/index';
 import { generateLongUUID } from './utils';
 import { OTEL_VERSION, VERSION } from './version';
@@ -8,12 +8,15 @@ import * as lsTypes from './types';
 import { Attributes } from './enums';
 
 const DEFAULT_SERVICE_NAME = 'otel-lightstep-exporter';
-const DEFAULT_URL = 'https://collector.lightstep.com:443/api/v2/reports';
+const DEFAULT_SATELLITE_HOST = 'https://collector.lightstep.com';
+const DEFAULT_SATELLITE_PORT = '443';
+const DEFAULT_SATELLITE_PATH = '/api/v2/reports';
+const DEFAULT_URL = `${DEFAULT_SATELLITE_HOST}:${DEFAULT_SATELLITE_PORT}${DEFAULT_SATELLITE_PATH}`;
 
 /**
- * OpenTelemetry Exporter Config
+ * Lightstep Exporter Config
  */
-export interface OpenTelemetryExporterConfig {
+export interface LightstepExporterConfig {
   serviceName?: string;
   hostname?: string;
   runtimeGUID?: string;
@@ -24,17 +27,17 @@ export interface OpenTelemetryExporterConfig {
 /**
  * Class for exporting spans from OpenTelemetry to LightStep in protobuf format
  */
-export class OpenTelemetryExporter implements SpanExporter {
+export class LightstepExporter implements SpanExporter {
   private _attributes: { [key: string]: any };
+  private _authProto: lsTypes.AuthProto;
   private _serviceName: string;
   private _hostname: string;
   private _runtimeGUID: string;
   private _shutdown = false;
-  private _token: string;
   private _url: string;
   private _version: string;
 
-  constructor(config: OpenTelemetryExporterConfig) {
+  constructor(config: LightstepExporterConfig) {
     if (!config) {
       throw 'Missing config';
     }
@@ -42,7 +45,7 @@ export class OpenTelemetryExporter implements SpanExporter {
       throw 'Missing token';
     }
     this._url = config.url || DEFAULT_URL;
-    this._token = config.token;
+    this._authProto = createAuthProto(config.token);
     this._runtimeGUID = config.runtimeGUID || generateLongUUID();
     this._version = VERSION;
     this._serviceName =
@@ -69,7 +72,7 @@ export class OpenTelemetryExporter implements SpanExporter {
           this._serviceName,
           this._version,
           this._attributes,
-          this._token,
+          this._authProto,
           startTime,
           spansToBeSent
         );

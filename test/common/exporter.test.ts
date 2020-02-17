@@ -1,18 +1,18 @@
 import * as assert from 'assert';
-import { OpenTelemetryExporter } from '../../src';
+import { LightstepExporter } from '../../src';
 
-describe('OpenTelemetryExporter', () => {
+describe('LightstepExporter', () => {
   it('should construct exporter', () => {
-    const exporter = new OpenTelemetryExporter({
+    const exporter = new LightstepExporter({
       token: '123',
     });
-    assert.ok(exporter instanceof OpenTelemetryExporter);
+    assert.ok(exporter instanceof LightstepExporter);
   });
   it('should throw error for missing config', () => {
     let error;
     try {
       // @ts-ignore
-      new OpenTelemetryExporter();
+      new LightstepExporter();
     } catch (e) {
       error = e;
     }
@@ -22,7 +22,7 @@ describe('OpenTelemetryExporter', () => {
     let error;
     try {
       // @ts-ignore
-      new OpenTelemetryExporter({});
+      new LightstepExporter({});
     } catch (e) {
       error = e;
     }

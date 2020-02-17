@@ -39,7 +39,7 @@ describe('transform', () => {
         {
           foo: 'bar',
         },
-        'dkasjdalsjdlaksjdkaskldj',
+        transform.createAuthProto('dkasjdalsjdlaksjdkaskldj'),
         [123, 123],
         [transform.toSpan(spanWithoutParent)]
       );
