@@ -1,10 +1,5 @@
 {
   "rulesDirectory": ["node_modules/tslint-microsoft-contrib"],
-  "linterOptions": {
-    "exclude": [
-      "src/generated_proto/**"
-    ]
-  },
   "rules": {
     "naming-convention": [true,
       { "type": "property", "modifiers": "protected", "leadingUnderscore": "require" },

@@ -57,3 +57,13 @@ const main = tracer.startSpan('main');
 main.end();
 
 ```
+
+### Generating the proto
+1. Make sure you have googleapis and lightstep-tracer-common, if not run
+```
+make clone
+```
+2. Generate sources
+```
+make proto
+```

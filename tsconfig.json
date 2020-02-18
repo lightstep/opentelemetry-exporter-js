@@ -20,7 +20,8 @@
     "target": "es2017"
   },
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "src/generated_proto"
   ],
   "include": [
     "src/**/*.ts",
