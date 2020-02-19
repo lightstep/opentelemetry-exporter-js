@@ -25,7 +25,7 @@ describe('LightstepExporter - node', () => {
       exporterConfig = {
         token: 'abc',
         serviceName: 'bar',
-        url: 'http://foo.bar.com',
+        collector_host: 'http://foo.bar.com',
       };
       exporter = new LightstepExporter(exporterConfig);
       spans = [];
@@ -46,7 +46,7 @@ describe('LightstepExporter - node', () => {
 
         assert.strictEqual(options.hostname, 'foo.bar.com');
         assert.strictEqual(options.method, 'POST');
-        assert.strictEqual(options.path, '/');
+        assert.strictEqual(options.path, '/api/v2/reports');
         done();
       });
     });

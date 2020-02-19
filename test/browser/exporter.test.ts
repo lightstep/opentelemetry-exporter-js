@@ -17,7 +17,7 @@ describe('LightstepExporter - web', () => {
     ExporterConfig = {
       serviceName: 'bar',
       token: 'abc',
-      url: 'http://foo.bar.com',
+      collector_host: 'http://foo.bar.com',
     };
     exporter = new LightstepExporter(ExporterConfig);
     spans = [];
@@ -38,7 +38,7 @@ describe('LightstepExporter - web', () => {
           const url = args[0];
           const body = args[1];
           assert.ok(body.length === 514);
-          assert.strictEqual(url, 'http://foo.bar.com');
+          assert.strictEqual(url, 'http://foo.bar.com/api/v2/reports');
           assert.strictEqual(spyBeacon.callCount, 1);
 
           done();
@@ -66,7 +66,7 @@ describe('LightstepExporter - web', () => {
           const body = request.requestBody;
 
           assert.ok(body.length === 514);
-          assert.strictEqual(url, 'http://foo.bar.com');
+          assert.strictEqual(url, 'http://foo.bar.com/api/v2/reports');
           assert.strictEqual(spyBeacon.callCount, 0);
           assert.strictEqual(request.method, 'POST');
 

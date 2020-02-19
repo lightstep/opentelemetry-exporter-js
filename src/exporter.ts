@@ -11,7 +11,6 @@ const DEFAULT_SERVICE_NAME = 'otel-lightstep-exporter';
 const DEFAULT_SATELLITE_HOST = 'https://collector.lightstep.com';
 const DEFAULT_SATELLITE_PORT = '443';
 const DEFAULT_SATELLITE_PATH = '/api/v2/reports';
-const DEFAULT_URL = `${DEFAULT_SATELLITE_HOST}:${DEFAULT_SATELLITE_PORT}${DEFAULT_SATELLITE_PATH}`;
 
 /**
  * Lightstep Exporter Config
@@ -21,7 +20,9 @@ export interface LightstepExporterConfig {
   hostname?: string;
   runtimeGUID?: string;
   token: string;
-  url?: string;
+  collector_host?: string;
+  collector_port?: number;
+  collector_path?: string;
 }
 
 /**
@@ -44,7 +45,14 @@ export class LightstepExporter implements SpanExporter {
     if (!config.token) {
       throw 'Missing token';
     }
-    this._url = config.url || DEFAULT_URL;
+    const host = config.collector_host || DEFAULT_SATELLITE_HOST;
+    const port =
+      config.collector_port || host.indexOf('https://') === 0
+        ? DEFAULT_SATELLITE_PORT
+        : '';
+    const path = config.collector_path || DEFAULT_SATELLITE_PATH;
+    this._url = `${host}${port ? `:${port}` : ''}${path}`;
+
     this._authProto = createAuthProto(config.token);
     this._runtimeGUID = config.runtimeGUID || generateLongUUID();
     this._version = VERSION;
