@@ -1,6 +1,5 @@
 'use strict';
 
-const opentelemetry = require('@opentelemetry/api');
 const { BasicTracerProvider, ConsoleSpanExporter, SimpleSpanProcessor } = require('@opentelemetry/tracing');
 const { LightstepExporter } = require('../build/src/index');
 
@@ -10,7 +9,8 @@ provider.addSpanProcessor(new SimpleSpanProcessor(new LightstepExporter({
   token: 'YOUR_TOKEN'
 })));
 
-opentelemetry.trace.initGlobalTracerProvider(provider);
+provider.register();
+
 const tracer = provider.getTracer('lightstep-exporter-example-node');
 
 const main = tracer.startSpan('main');

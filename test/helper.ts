@@ -1,3 +1,5 @@
+import { TraceFlags } from '@opentelemetry/api';
+import { Resource } from '@opentelemetry/resources';
 import { ReadableSpan } from '@opentelemetry/tracing';
 
 export const spanWithoutParent: ReadableSpan = {
@@ -6,6 +8,7 @@ export const spanWithoutParent: ReadableSpan = {
   spanContext: {
     traceId: '123',
     spanId: '456',
+    traceFlags: TraceFlags.SAMPLED,
   },
   startTime: [123, 456000000],
   endTime: [124, 500000000],
@@ -18,7 +21,7 @@ export const spanWithoutParent: ReadableSpan = {
   },
   links: [
     {
-      spanContext: {
+      context: {
         traceId: '111',
         spanId: '222',
       },
@@ -34,6 +37,8 @@ export const spanWithoutParent: ReadableSpan = {
     },
   ],
   duration: [1, 44000000],
+  ended: true,
+  resource: Resource.empty(),
 };
 
 export const spanWithParent: ReadableSpan = Object.assign(

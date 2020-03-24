@@ -3,6 +3,11 @@ clone:
 	git clone git@github.com:googleapis/googleapis.git ../googleapis
 	git clone git@github.com:lightstep/lightstep-tracer-common.git ../lightstep-tracer-common
 
+latest:
+	cd ../googleapis
+	git pull
+	cd ../lightstep-tracer-common
+	git pull
 
 .PHONY: proto
 proto:

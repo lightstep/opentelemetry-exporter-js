@@ -1,18 +1,17 @@
 'use strict';
-import * as opentelemetry from '@opentelemetry/api';
 import { ConsoleSpanExporter, SimpleSpanProcessor } from '@opentelemetry/tracing';
 import { WebTracerProvider } from '@opentelemetry/web';
-import { ZoneScopeManager } from '@opentelemetry/scope-zone';
+import { ZoneContextManager } from '@opentelemetry/context-zone';
 const { LightstepExporter } = require('../build/src/index');
 
 const provider = new WebTracerProvider({
-  scopeManager: new ZoneScopeManager(),
+  scopeManager: new ZoneContextManager(),
 });
 provider.addSpanProcessor(new SimpleSpanProcessor(new ConsoleSpanExporter()));
 provider.addSpanProcessor(new SimpleSpanProcessor(new LightstepExporter({
   token: 'YOUR_TOKEN'
 })));
-opentelemetry.trace.initGlobalTracerProvider(provider);
+provider.register();
 const tracer = provider.getTracer('lightstep-exporter-example-web');
 
 const main = tracer.startSpan('main');
