@@ -11,7 +11,9 @@ provider.addSpanProcessor(new SimpleSpanProcessor(new ConsoleSpanExporter()));
 provider.addSpanProcessor(new SimpleSpanProcessor(new LightstepExporter({
   token: 'YOUR_TOKEN'
 })));
-provider.register();
+provider.register({
+  contextManager: new ZoneContextManager()
+});
 const tracer = provider.getTracer('lightstep-exporter-example-web');
 
 const main = tracer.startSpan('main');

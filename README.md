@@ -17,19 +17,18 @@ LightStep Exporter for OpenTelemetry JS
 
 ```javascript
 'use strict';
-import * as opentelemetry from '@opentelemetry/api';
 import { SimpleSpanProcessor } from '@opentelemetry/tracing';
 import { WebTracerProvider } from '@opentelemetry/web';
 import { ZoneContextManager } from '@opentelemetry/context-zone';
 const { LightstepExporter } = require('lightstep-opentelemetry-exporter');
 
-const provider = new WebTracerProvider({
-  scopeManager: new ZoneContextManager(),
-});
+const provider = new WebTracerProvider();
 provider.addSpanProcessor(new SimpleSpanProcessor(new LightstepExporter({
   token: 'YOUR_TOKEN'
 })));
-provider.register();
+provider.register({
+  contextManager: new ZoneContextManager()
+});
 const tracer = provider.getTracer('lightstep-exporter-example-web');
 
 const main = tracer.startSpan('main');
