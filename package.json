@@ -2,8 +2,8 @@
   "name": "lightstep-opentelemetry-exporter",
   "description": "OpenTelemetry Exporter for LightStep",
   "version": "0.1.0",
-  "main": "index.js",
-  "types": "index.d.ts",
+  "main": "build/src/index.js",
+  "types": "build/src/index.d.ts",
   "browser": {
     "./src/platform/index.ts": "./src/platform/browser/index.ts",
     "./build/src/platform/index.js": "./build/src/platform/browser/index.js"
