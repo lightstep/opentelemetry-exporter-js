@@ -27,7 +27,7 @@ provider.addSpanProcessor(new SimpleSpanProcessor(new LightstepExporter({
   token: 'YOUR_TOKEN'
 })));
 provider.register({
-  contextManager: new ZoneContextManager()
+  contextManager: new ZoneContextManager().enable()
 });
 const tracer = provider.getTracer('lightstep-exporter-example-web');
 
@@ -39,12 +39,11 @@ main.end();
 
 ```javascript
 'use strict';
-
-const opentelemetry = require('@opentelemetry/api');
-const { BasicTracerProvider, SimpleSpanProcessor } = require('@opentelemetry/tracing');
+const { NodeTracerProvider } = require('@opentelemetry/node');
+const { SimpleSpanProcessor } = require('@opentelemetry/tracing');
 const { LightstepExporter } = require('lightstep-opentelemetry-exporter');
 
-const provider = new BasicTracerProvider();
+const provider = new NodeTracerProvider();
 provider.addSpanProcessor(new SimpleSpanProcessor(new LightstepExporter({
   token: 'YOUR_TOKEN'
 })));

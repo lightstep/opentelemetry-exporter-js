@@ -9,29 +9,34 @@ const provider = new WebTracerProvider({
 });
 provider.addSpanProcessor(new SimpleSpanProcessor(new ConsoleSpanExporter()));
 provider.addSpanProcessor(new SimpleSpanProcessor(new LightstepExporter({
-  token: 'YOUR_TOKEN'
+  token: 'YOUR_TOKEN',
 })));
 provider.register({
-  contextManager: new ZoneContextManager()
+  contextManager: new ZoneContextManager().enable(),
 });
 const tracer = provider.getTracer('lightstep-exporter-example-web');
 
 const main = tracer.startSpan('main');
-const span = tracer.startSpan('test', {
-  parent: main
-});
-main.setAttribute('atr1', 'test1');
-span.setAttribute('atr2', 'test2');
-span.addEvent('event 1');
-span.addEvent('event 2 with attributes',  {
-  'atr1': 'value1',
-  'atr2': 'value2',
-});
 
-// simulate some random work.
-for (let i = 0; i <= Math.floor(Math.random() * 40000000); i += 1) {
-  // empty
+function wait() {
+  setTimeout(() => {
+    const span = tracer.startSpan('test');
+    main.setAttribute('atr1', 'test1');
+    span.setAttribute('atr2', 'test2');
+    span.addEvent('event 1');
+    span.addEvent('event 2 with attributes', {
+      'atr1': 'value1',
+      'atr2': 'value2',
+    });
+
+    // simulate some random work.
+    for (let i = 0; i <= Math.floor(Math.random() * 40000000); i += 1) {
+      // empty
+    }
+
+    span.end();
+    main.end();
+  }, 10);
 }
 
-span.end();
-main.end();
+tracer.withSpan(main, wait);

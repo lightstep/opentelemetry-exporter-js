@@ -55,6 +55,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.8.4",
+    "@opentelemetry/node": "^0.5.1",
     "@opentelemetry/web": "^0.5.1",
     "@opentelemetry/plugin-document-load": "^0.5.1",
     "@opentelemetry/context-zone": "^0.5.1",
