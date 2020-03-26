@@ -17,6 +17,7 @@
     "compile": "npm run version:update && tsc -p .",
     "lint": "gts check",
     "lint:fix": "gts fix",
+    "postinstall": "compile",
     "precompile": "tsc --version",
     "prepare": "npm run compile",
     "start": "node example/node.js",
