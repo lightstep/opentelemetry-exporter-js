@@ -29,7 +29,7 @@ tracerProvider.addSpanProcessor(new SimpleSpanProcessor(new LightstepExporter({
 
 // Register the tracer
 tracerProvider.register({
-  contextManager: new ZoneContextManager().enable(),
+  contextManager: new ZoneContextManager(),
 });
 
 function getData(url, resolve) {
