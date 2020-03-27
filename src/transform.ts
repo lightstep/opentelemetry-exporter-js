@@ -131,7 +131,7 @@ function getReferences(span: ReadableSpan) {
   // reference links
   span.links.forEach((link: Link) => {
     const ref = new proto.Reference();
-    const linkContext = link.spanContext;
+    const linkContext = link.context;
     if (linkContext.spanId === span.parentSpanId) {
       ref.setRelationship(proto.Reference.Relationship.CHILD_OF);
     } else {

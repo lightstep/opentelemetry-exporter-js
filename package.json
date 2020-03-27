@@ -2,8 +2,8 @@
   "name": "lightstep-opentelemetry-exporter",
   "description": "OpenTelemetry Exporter for LightStep",
   "version": "0.1.0",
-  "main": "index.js",
-  "types": "index.d.ts",
+  "main": "build/src/index.js",
+  "types": "build/src/index.d.ts",
   "browser": {
     "./src/platform/index.ts": "./src/platform/browser/index.ts",
     "./build/src/platform/index.js": "./build/src/platform/browser/index.js"
@@ -47,17 +47,21 @@
     ]
   },
   "dependencies": {
-    "@opentelemetry/api": "^0.4.0",
-    "@opentelemetry/base": "^0.4.0",
-    "@opentelemetry/core": "^0.4.0",
-    "@opentelemetry/tracing": "^0.4.0",
+    "@opentelemetry/api": "^0.5.2",
+    "@opentelemetry/base": "^0.5.2",
+    "@opentelemetry/core": "^0.5.2",
+    "@opentelemetry/tracing": "^0.5.2",
     "google-protobuf": "^3.11.2"
   },
   "devDependencies": {
     "@babel/core": "^7.8.4",
-    "@opentelemetry/web": "^0.4.0",
-    "@opentelemetry/plugin-document-load": "^0.4.0",
-    "@opentelemetry/scope-zone": "^0.4.0",
+    "@opentelemetry/context-zone": "^0.5.2",
+    "@opentelemetry/node": "^0.5.2",
+    "@opentelemetry/plugin-document-load": "^0.5.2",
+    "@opentelemetry/resources": "^0.5.2",
+    "@opentelemetry/plugin-user-interaction": "^0.5.2",
+    "@opentelemetry/plugin-xml-http-request": "^0.5.2",
+    "@opentelemetry/web": "^0.5.2",
     "@types/mocha": "^7.0.1",
     "@types/node": "^13.7.0",
     "@types/sinon": "^7.5.1",

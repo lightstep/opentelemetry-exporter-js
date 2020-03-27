@@ -1,36 +1,61 @@
 'use strict';
-import * as opentelemetry from '@opentelemetry/api';
-import { ConsoleSpanExporter, SimpleSpanProcessor } from '@opentelemetry/tracing';
+
+import opentelemetry from '@opentelemetry/api';
 import { WebTracerProvider } from '@opentelemetry/web';
-import { ZoneScopeManager } from '@opentelemetry/scope-zone';
+import { ConsoleSpanExporter, SimpleSpanProcessor } from '@opentelemetry/tracing';
+import { ZoneContextManager } from '@opentelemetry/context-zone';
+import { UserInteractionPlugin } from '@opentelemetry/plugin-user-interaction';
+import { XMLHttpRequestPlugin } from '@opentelemetry/plugin-xml-http-request';
+
 const { LightstepExporter } = require('../build/src/index');
 
-const provider = new WebTracerProvider({
-  scopeManager: new ZoneScopeManager(),
+// Create a provider for activating and tracking spans
+const tracerProvider = new WebTracerProvider({
+  plugins: [
+    new UserInteractionPlugin(),
+    new XMLHttpRequestPlugin({
+      // this is webpack  auto reload - we can ignore it
+      ignoreUrls: [/localhost:8091\/sockjs-node/],
+      propagateTraceHeaderCorsUrls: '*',
+    }),
+  ],
 });
-provider.addSpanProcessor(new SimpleSpanProcessor(new ConsoleSpanExporter()));
-provider.addSpanProcessor(new SimpleSpanProcessor(new LightstepExporter({
-  token: 'YOUR_TOKEN'
+
+// Configure a span processor and exporter for the tracer
+tracerProvider.addSpanProcessor(new SimpleSpanProcessor(new ConsoleSpanExporter()));
+tracerProvider.addSpanProcessor(new SimpleSpanProcessor(new LightstepExporter({
+  token: 'YOUR_TOKEN',
 })));
-opentelemetry.trace.initGlobalTracerProvider(provider);
-const tracer = provider.getTracer('lightstep-exporter-example-web');
 
-const main = tracer.startSpan('main');
-const span = tracer.startSpan('test', {
-  parent: main
-});
-main.setAttribute('atr1', 'test1');
-span.setAttribute('atr2', 'test2');
-span.addEvent('event 1');
-span.addEvent('event 2 with attributes',  {
-  'atr1': 'value1',
-  'atr2': 'value2',
+// Register the tracer
+tracerProvider.register({
+  contextManager: new ZoneContextManager(),
 });
 
-// simulate some random work.
-for (let i = 0; i <= Math.floor(Math.random() * 40000000); i += 1) {
-  // empty
+function getData(url, resolve) {
+  return new Promise(async (resolve, reject) => {
+    const req = new XMLHttpRequest();
+    req.open('GET', url, true);
+    req.setRequestHeader('Content-Type', 'application/json');
+    req.setRequestHeader('Accept', 'application/json');
+    req.send();
+    req.onload = function () {
+      resolve();
+    };
+  });
 }
 
-span.end();
-main.end();
+const tracer = opentelemetry.trace.getTracer('lightstep-web-example');
+
+window.addEventListener('load', () => {
+  const btnAdd = document.getElementById('btn');
+  btnAdd.addEventListener('click', () => {
+    tracer.getCurrentSpan().addEvent('starting ...');
+    getData('https://httpbin.org/get?a=1').then(() => {
+      tracer.getCurrentSpan().addEvent('first file downloaded');
+      getData('https://httpbin.org/get?a=1').then(() => {
+        tracer.getCurrentSpan().addEvent('second file downloaded');
+      });
+    });
+  });
+});

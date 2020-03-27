@@ -1,34 +1,40 @@
 'use strict';
 
-const opentelemetry = require('@opentelemetry/api');
-const { BasicTracerProvider, ConsoleSpanExporter, SimpleSpanProcessor } = require('@opentelemetry/tracing');
+const { NodeTracerProvider } = require('@opentelemetry/node');
+const { ConsoleSpanExporter, SimpleSpanProcessor } = require('@opentelemetry/tracing');
 const { LightstepExporter } = require('../build/src/index');
 
-const provider = new BasicTracerProvider();
+const provider = new NodeTracerProvider();
 provider.addSpanProcessor(new SimpleSpanProcessor(new ConsoleSpanExporter()));
 provider.addSpanProcessor(new SimpleSpanProcessor(new LightstepExporter({
   token: 'YOUR_TOKEN'
 })));
 
-opentelemetry.trace.initGlobalTracerProvider(provider);
+provider.register();
+
 const tracer = provider.getTracer('lightstep-exporter-example-node');
 
 const main = tracer.startSpan('main');
-const span = tracer.startSpan('test', {
-  parent: main
-});
-main.setAttribute('atr1', 'test1');
-span.setAttribute('atr2', 'test2');
-span.addEvent('event 1');
-span.addEvent('event 2 with attributes',  {
-  'atr1': 'value1',
-  'atr2': 'value2',
-});
 
-// simulate some random work.
-for (let i = 0; i <= Math.floor(Math.random() * 40000000); i += 1) {
-  // empty
+function wait() {
+  setTimeout(() => {
+    const span = tracer.startSpan('test');
+    main.setAttribute('atr1', 'test1');
+    span.setAttribute('atr2', 'test2');
+    span.addEvent('event 1');
+    span.addEvent('event 2 with attributes', {
+      'atr1': 'value1',
+      'atr2': 'value2',
+    });
+
+    // simulate some random work.
+    for (let i = 0; i <= Math.floor(Math.random() * 40000000); i += 1) {
+      // empty
+    }
+
+    span.end();
+    main.end();
+  }, 10);
 }
 
-span.end();
-main.end();
+tracer.withSpan(main, wait);

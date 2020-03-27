@@ -5,9 +5,7 @@ const directory = path.resolve(__dirname);
 
 const common = {
   mode: 'development',
-  entry: {
-    'test': 'example/index.js'
-  },
+  entry: 'example/index.js',
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: '[name].js',
