@@ -1,7 +1,7 @@
 export class Auth {
-  accessToken: string = '';
+  readonly accessToken: string;
 
-  // constructor(accessToken: string) {
-  //   this.accessToken = accessToken;
-  // }
+  constructor({ accessToken }: { accessToken: string }) {
+    this.accessToken = accessToken;
+  }
 }
