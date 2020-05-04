@@ -8,30 +8,7 @@ import {
 } from '@opentelemetry/core';
 import { Link, SpanContext, TimedEvent } from '@opentelemetry/api';
 
-export function createAuth(accessToken: string): ls.Auth {
-  return new api.Auth({
-    accessToken: accessToken,
-  });
-}
-
-export function createReportRequest(
-  runtimeGUID: string,
-  attributes: { [key: string]: any },
-  auth: ls.Auth,
-  spans: ReadableSpan[]
-): ls.ReportRequest {
-  return new api.ReportRequest({
-    auth: auth,
-    reporter: getReporter(runtimeGUID, {
-      ...attributes,
-      ...spans[0].resource.labels,
-    }),
-    spans: spans.map(toSpan),
-    timestampOffsetMicros: '0',
-  });
-}
-
-function toSpan(span: ReadableSpan): ls.Span {
+export function toSpan(span: ReadableSpan): ls.Span {
   return new api.Span({
     operationName: span.name,
     startTimestamp: new Date(hrTimeToMilliseconds(span.startTime)),
@@ -115,18 +92,6 @@ function getTags(span: ReadableSpan): ls.KeyValue[] {
   return Object.keys(span.attributes).map((k: string) =>
     NewKeyValue(k, span.attributes[k])
   );
-}
-
-function getReporter(
-  runtimeGUID: string = '',
-  attributes: { [key: string]: any }
-) {
-  return new api.Reporter({
-    reporterId: hexToDec(runtimeGUID),
-    tags: Object.keys(attributes).map((key) =>
-      NewKeyValue(key, attributes[key])
-    ),
-  });
 }
 
 function NewKeyValue(key: string, value: any): ls.KeyValue {

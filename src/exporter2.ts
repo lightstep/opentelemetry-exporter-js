@@ -1,10 +1,10 @@
 import { ExportResult } from '@opentelemetry/base';
 import { ReadableSpan, SpanExporter } from '@opentelemetry/tracing';
-import { createAuth, createReportRequest } from './transform2';
+import * as ls from './types2';
+import { createReport } from './create-report';
 import { PLATFORM, sendSpans2 } from './platform/index';
 import { generateLongUUID } from './utils';
 import { OTEL_VERSION, VERSION } from './version';
-import * as ls from './types2';
 import { Attributes } from './enums';
 
 const DEFAULT_SERVICE_NAME = 'otel-lightstep-exporter';
@@ -30,7 +30,8 @@ export interface LightstepExporterConfig2 {
  */
 export class LightstepExporter2 implements SpanExporter {
   private _attributes: { [key: string]: any };
-  private _auth: ls.Auth;
+  private _accessToken: string;
+  private _createReport: (spans: ReadableSpan[]) => ls.ReportRequest;
   private _serviceName: string;
   private _hostname: string;
   private _runtimeGUID: string;
@@ -52,8 +53,7 @@ export class LightstepExporter2 implements SpanExporter {
         : '';
     const path = config.collector_path || DEFAULT_SATELLITE_PATH;
     this._url = `${host}${port ? `:${port}` : ''}${path}`;
-
-    this._auth = createAuth(config.token);
+    this._accessToken = config.token;
     this._runtimeGUID = config.runtimeGUID || generateLongUUID();
     this._version = VERSION;
     this._serviceName =
@@ -66,21 +66,19 @@ export class LightstepExporter2 implements SpanExporter {
       [Attributes.COMPONENT_NAME]: this._serviceName,
       [Attributes.HOSTNAME]: this._hostname,
     };
+    this._createReport = createReport(
+      this._runtimeGUID,
+      config.token,
+      this._attributes
+    );
   }
 
   private _exportSpans(spans: ReadableSpan[]): Promise<unknown> {
     return new Promise((resolve, reject) => {
       try {
-        const report = createReportRequest(
-          this._runtimeGUID,
-          this._attributes,
-          this._auth,
-          spans
-        );
-
         sendSpans2(
-          JSON.stringify(report),
-          this._auth.accessToken,
+          JSON.stringify(this._createReport(spans)),
+          this._accessToken,
           this._url,
           resolve,
           reject
