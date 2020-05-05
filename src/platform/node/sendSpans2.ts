@@ -5,45 +5,57 @@ import { IncomingMessage } from 'http';
 import * as url from 'url';
 
 /**
- *
- * @param buffer
+ * @param accessToken
  * @param urlToSend
- * @param onSuccess
- * @param onError
  */
 export function sendSpans2(
-  body: string,
   accessToken: string,
-  urlToSend: string,
+  urlToSend: string
+): (
+  body: string,
   onSuccess: () => void,
   onError: (status?: number) => void
-) {
-  const parsedUrl = url.parse(urlToSend);
-  const options = {
-    hostname: parsedUrl.hostname,
-    port: parsedUrl.port,
-    path: parsedUrl.path,
-    method: 'POST',
-    headers: {
-      Accept: 'application/json',
-      'Content-Length': Buffer.byteLength(body),
-      'Content-Type': 'application/json',
-      'LightStep-Access-Token': accessToken,
-    },
+) => void {
+  const _parsedUrl = url.parse(urlToSend);
+  const _headers: { [key: string]: any } = {
+    Accept: 'application/json',
+    'Content-Type': 'application/json',
+    'LightStep-Access-Token': accessToken,
   };
+  const _options = {
+    hostname: _parsedUrl.hostname,
+    port: _parsedUrl.port,
+    path: _parsedUrl.path,
+    method: 'POST',
+    headers: _headers,
+  };
+  const request =
+    _parsedUrl.protocol === 'http:' ? http.request : https.request;
 
-  const request = parsedUrl.protocol === 'http:' ? http.request : https.request;
-  const req = request(options, (res: IncomingMessage) => {
-    if (res.statusCode && res.statusCode < 299) {
-      onSuccess();
-    } else {
-      onError(res.statusCode);
-    }
-  });
+  return function(
+    body: string,
+    onSuccess: () => void,
+    onError: (status?: number) => void
+  ) {
+    _headers['Content-Length'] = Buffer.byteLength(body);
 
-  req.on('error', (error: Error) => {
-    onError();
-  });
-  req.write(body);
-  req.end();
+    const req = request(_options, (res: IncomingMessage) => {
+      if (res.statusCode && res.statusCode < 299) {
+        console.log('probably worked');
+        onSuccess();
+      } else {
+        console.log(req);
+        console.log(body);
+        console.log('probably failed', res.statusCode, res.statusMessage);
+        onError(res.statusCode);
+      }
+    });
+
+    req.on('error', (error: Error) => {
+      console.log('twas an error: ', error);
+      onError();
+    });
+    req.write(body);
+    req.end();
+  };
 }

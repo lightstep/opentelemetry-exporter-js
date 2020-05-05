@@ -29,15 +29,13 @@ export interface LightstepExporterConfig2 {
  * Class for exporting spans from OpenTelemetry to LightStep in protobuf format
  */
 export class LightstepExporter2 implements SpanExporter {
-  private _attributes: { [key: string]: any };
-  private _accessToken: string;
   private _createReport: (spans: ReadableSpan[]) => ls.ReportRequest;
-  private _serviceName: string;
-  private _hostname: string;
-  private _runtimeGUID: string;
+  private _sendSpans: (
+    body: string,
+    onSuccess: () => void,
+    onError: (status?: number) => void
+  ) => void;
   private _shutdown = false;
-  private _url: string;
-  private _version: string;
 
   constructor(config: LightstepExporterConfig2) {
     if (!config) {
@@ -52,34 +50,28 @@ export class LightstepExporter2 implements SpanExporter {
         ? DEFAULT_SATELLITE_PORT
         : '';
     const path = config.collector_path || DEFAULT_SATELLITE_PATH;
-    this._url = `${host}${port ? `:${port}` : ''}${path}`;
-    this._accessToken = config.token;
-    this._runtimeGUID = config.runtimeGUID || generateLongUUID();
-    this._version = VERSION;
-    this._serviceName =
-      config.serviceName || `${DEFAULT_SERVICE_NAME}-${PLATFORM}`;
-    this._hostname = config.hostname || '';
-    this._attributes = {
-      [Attributes.TRACER_VERSION]: this._version,
+    const url = `${host}${port ? `:${port}` : ''}${path}`;
+    const attributes = {
+      [Attributes.TRACER_VERSION]: VERSION,
       [Attributes.TRACER_PLATFORM]: PLATFORM,
       [Attributes.TRACER_PLATFORM_VERSION]: OTEL_VERSION,
-      [Attributes.COMPONENT_NAME]: this._serviceName,
-      [Attributes.HOSTNAME]: this._hostname,
+      [Attributes.COMPONENT_NAME]:
+        config.serviceName || `${DEFAULT_SERVICE_NAME}-${PLATFORM}`,
+      [Attributes.HOSTNAME]: config.hostname || '',
     };
     this._createReport = createReport(
-      this._runtimeGUID,
+      config.runtimeGUID || generateLongUUID(),
       config.token,
-      this._attributes
+      attributes
     );
+    this._sendSpans = sendSpans2(config.token, url);
   }
 
   private _exportSpans(spans: ReadableSpan[]): Promise<unknown> {
     return new Promise((resolve, reject) => {
       try {
-        sendSpans2(
+        this._sendSpans(
           JSON.stringify(this._createReport(spans)),
-          this._accessToken,
-          this._url,
           resolve,
           reject
         );
