@@ -22,7 +22,7 @@ export function createReport(
     _reporter = new api.Reporter({
       reporterId: hexToDec(runtimeGUID),
       tags: Object.keys(attributes).map(
-        (key) => new api.KeyValue({ key: key, value: attributes[key] })
+        key => new api.KeyValue({ key: key, value: attributes[key] })
       ),
     });
     return _reporter;

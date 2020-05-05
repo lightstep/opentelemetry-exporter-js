@@ -37,7 +37,7 @@ describe('LightstepExporter - node', () => {
       spyWrite.restore();
     });
 
-    it('should open the connection', (done) => {
+    it('should open the connection', done => {
       exporter.export(spans, function() {});
 
       setTimeout(() => {
@@ -51,7 +51,7 @@ describe('LightstepExporter - node', () => {
       });
     });
 
-    it('should successfully send the spans', (done) => {
+    it('should successfully send the spans', done => {
       exporter.export(spans, function() {});
 
       setTimeout(() => {

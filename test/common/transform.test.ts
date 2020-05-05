@@ -2,7 +2,6 @@ import * as assert from 'assert';
 import * as transform from '../../src/transform';
 import * as ls from '../../src/types';
 import {
-  //bodyBuffer,
   spanJSON,
   spanWithParentJSON,
   spanWithParent,

@@ -31,7 +31,7 @@ describe('LightstepExporter - web', () => {
 
   describe('export', () => {
     describe('when "sendBeacon" is available', () => {
-      it('should successfully send the spans using sendBeacon', (done) => {
+      it('should successfully send the spans using sendBeacon', done => {
         exporter.export(spans, function() {});
         setTimeout(() => {
           const args = spyBeacon.args[0];
@@ -57,7 +57,7 @@ describe('LightstepExporter - web', () => {
         server.restore();
       });
 
-      it('should successfully send the spans using XMLHttpRequest', (done) => {
+      it('should successfully send the spans using XMLHttpRequest', done => {
         exporter.export(spans, function() {});
 
         setTimeout(() => {
