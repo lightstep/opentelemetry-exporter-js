@@ -15,14 +15,14 @@ export interface KeyValue {
    * json_value.
    */
   readonly stringValue?: string;
-  // intValue?: string;
-  // doubleValue?: number;
-  // boolValue?: boolean;
+  readonly intValue?: string;
+  readonly doubleValue?: number;
+  readonly boolValue?: boolean;
   /**
    * Must be a well-formed JSON value. Truncated JSON should go in
    * string_value. Should not be used for tags.
    */
-  // jsonValue?: string;
+  readonly jsonValue?: string;
 }
 
 /**

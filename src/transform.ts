@@ -77,9 +77,9 @@ function getLogs(span: ReadableSpan): ls.Log[] {
     const fields: ls.KeyValue[] = [];
     const attributes = ev.attributes || {};
     Object.keys(attributes).forEach((key: string) => {
-      fields.push(NewKeyValue(key, attributes[key]));
+      fields.push(new api.KeyValue({ key: key, value: attributes[key] }));
     });
-    fields.push(NewKeyValue('event', ev.name));
+    fields.push(new api.KeyValue({ key: 'event', value: ev.name }));
 
     return new api.Log({
       timestamp: hrTimeToDate(ev.time),
@@ -89,18 +89,11 @@ function getLogs(span: ReadableSpan): ls.Log[] {
 }
 
 function getTags(span: ReadableSpan): ls.KeyValue[] {
-  return Object.keys(span.attributes).map((k: string) =>
-    NewKeyValue(k, span.attributes[k])
+  return Object.keys(span.attributes).map(
+    (k: string) => new api.KeyValue({ key: k, value: span.attributes[k] })
   );
 }
 
 function hrTimeToDate(hrTime: HrTime): Date {
   return new Date(hrTimeToMilliseconds(hrTime));
-}
-
-function NewKeyValue(key: string, value: any): ls.KeyValue {
-  return new api.KeyValue({
-    key: key,
-    value: String(value),
-  });
 }
