@@ -41,18 +41,13 @@ export function sendSpans(
 
     const req = request(_options, (res: IncomingMessage) => {
       if (res.statusCode && res.statusCode < 299) {
-        console.log('probably worked');
         onSuccess();
       } else {
-        console.log(req);
-        console.log(body);
-        console.log('probably failed', res.statusCode, res.statusMessage);
         onError(res.statusCode);
       }
     });
 
     req.on('error', (error: Error) => {
-      console.log('twas an error: ', error);
       onError();
     });
     req.write(body);
