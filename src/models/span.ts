@@ -1,4 +1,4 @@
-import { KeyValue, Log, Reference, SpanContext } from '../types2';
+import { KeyValue, Log, Reference, SpanContext } from '../types';
 
 export class Span {
   readonly spanContext: SpanContext;

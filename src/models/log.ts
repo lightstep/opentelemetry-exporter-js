@@ -1,4 +1,4 @@
-import { KeyValue } from '../types2';
+import { KeyValue } from '../types';
 
 export class Log {
   readonly timestamp: Date;

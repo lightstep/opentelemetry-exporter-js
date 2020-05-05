@@ -1,6 +1,6 @@
-import * as ls from './types2';
+import * as ls from './types';
 import * as api from './models';
-import { toSpan } from './transform2';
+import { toSpan } from './transform';
 import { hexToDec } from './utils';
 import { ReadableSpan } from '@opentelemetry/tracing';
 

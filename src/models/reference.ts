@@ -1,4 +1,4 @@
-import { Relationship, SpanContext } from '../types2';
+import { Relationship, SpanContext } from '../types';
 
 export class Reference {
   readonly relationship: Relationship;

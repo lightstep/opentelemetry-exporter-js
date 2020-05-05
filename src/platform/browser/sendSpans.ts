@@ -5,64 +5,67 @@
  * @param onError
  */
 export function sendSpans(
-  buffer: Uint8Array,
-  urlToSend: string,
+  accessToken: string,
+  urlToSend: string
+): (
+  body: string,
   onSuccess: () => void,
   onError: (status?: number) => void
-) {
-  if (typeof navigator.sendBeacon === 'function') {
-    sendSpansWithBeacon(buffer, urlToSend, onSuccess, onError);
-  } else {
-    sendSpansWithXhr(buffer, urlToSend, onSuccess, onError);
+) => void {
+  /**
+   * @param body
+   * @param onSuccess
+   * @param onError
+   */
+  function sendSpansWithBeacon(
+    body: string,
+    onSuccess: () => void,
+    onError: (status?: number) => void
+  ) {
+    if (navigator.sendBeacon(urlToSend, body)) {
+      onSuccess();
+    } else {
+      onError();
+    }
   }
-}
-/**
- *
- * @param buffer
- * @param urlToSend
- * @param onSuccess
- * @param onError
- */
-function sendSpansWithBeacon(
-  buffer: Uint8Array,
-  urlToSend: string,
-  onSuccess: () => void,
-  onError: (status?: number) => void
-) {
-  if (navigator.sendBeacon(urlToSend, buffer)) {
-    onSuccess();
-  } else {
-    onError();
-  }
-}
 
-/**
- *
- * @param buffer
- * @param urlToSend
- * @param onSuccess
- * @param onError
- */
-function sendSpansWithXhr(
-  buffer: Uint8Array,
-  urlToSend: string,
-  onSuccess: () => void,
-  onError: (status?: number) => void
-) {
-  const xhr = new XMLHttpRequest();
-  xhr.responseType = 'arraybuffer';
-  xhr.open('POST', urlToSend);
-  xhr.setRequestHeader('Accept', 'application/octet-stream');
-  xhr.setRequestHeader('Content-Type', 'application/octet-stream');
-
-  xhr.onreadystatechange = () => {
-    if (xhr.readyState === XMLHttpRequest.DONE) {
-      if (xhr.status >= 200 && xhr.status <= 299) {
-        onSuccess();
-      } else {
-        onError(xhr.status);
+  /**
+   *
+   * @param body
+   * @param onSuccess
+   * @param onError
+   */
+  function sendSpansWithXhr(
+    body: string,
+    onSuccess: () => void,
+    onError: (status?: number) => void
+  ) {
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', urlToSend);
+    xhr.setRequestHeader('Accept', 'application/json');
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.setRequestHeader('LightStep-Access-Token', accessToken);
+    xhr.onreadystatechange = () => {
+      if (xhr.readyState === XMLHttpRequest.DONE) {
+        if (xhr.status >= 200 && xhr.status <= 299) {
+          onSuccess();
+        } else {
+          onError(xhr.status);
+        }
       }
+    };
+    xhr.send(body);
+  }
+
+  return function(
+    body: string,
+    onSuccess: () => void,
+    onError: (status?: number) => void
+  ) {
+    if (typeof navigator.sendBeacon === 'function') {
+      sendSpansWithBeacon(body, onSuccess, onError);
+    } else {
+      sendSpansWithXhr(body, onSuccess, onError);
     }
   };
-  xhr.send(buffer);
 }

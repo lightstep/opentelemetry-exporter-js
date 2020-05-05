@@ -1,4 +1,4 @@
-import { Auth, Reporter, Span } from '../types2';
+import { Auth, Reporter, Span } from '../types';
 
 export class ReportRequest {
   readonly reporter: Reporter;

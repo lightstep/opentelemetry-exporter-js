@@ -1,10 +1,10 @@
 import { ExportResult } from '@opentelemetry/base';
 import { ReadableSpan, SpanExporter } from '@opentelemetry/tracing';
-import { toSpan, toBuffer, createAuthProto } from './transform';
+import * as ls from './types';
+import { createReport } from './create-report';
 import { PLATFORM, sendSpans } from './platform/index';
 import { generateLongUUID } from './utils';
 import { OTEL_VERSION, VERSION } from './version';
-import * as lsTypes from './types';
 import { Attributes } from './enums';
 
 const DEFAULT_SERVICE_NAME = 'otel-lightstep-exporter';
@@ -29,14 +29,13 @@ export interface LightstepExporterConfig {
  * Class for exporting spans from OpenTelemetry to LightStep in protobuf format
  */
 export class LightstepExporter implements SpanExporter {
-  private _attributes: { [key: string]: any };
-  private _authProto: lsTypes.AuthProto;
-  private _serviceName: string;
-  private _hostname: string;
-  private _runtimeGUID: string;
+  private _createReport: (spans: ReadableSpan[]) => ls.ReportRequest;
+  private _sendSpans: (
+    body: string,
+    onSuccess: () => void,
+    onError: (status?: number) => void
+  ) => void;
   private _shutdown = false;
-  private _url: string;
-  private _version: string;
 
   constructor(config: LightstepExporterConfig) {
     if (!config) {
@@ -51,41 +50,31 @@ export class LightstepExporter implements SpanExporter {
         ? DEFAULT_SATELLITE_PORT
         : '';
     const path = config.collector_path || DEFAULT_SATELLITE_PATH;
-    this._url = `${host}${port ? `:${port}` : ''}${path}`;
-
-    this._authProto = createAuthProto(config.token);
-    this._runtimeGUID = config.runtimeGUID || generateLongUUID();
-    this._version = VERSION;
-    this._serviceName =
-      config.serviceName || `${DEFAULT_SERVICE_NAME}-${PLATFORM}`;
-    this._hostname = config.hostname || '';
-    this._attributes = {
-      [Attributes.TRACER_VERSION]: this._version,
+    const url = `${host}${port ? `:${port}` : ''}${path}`;
+    const attributes = {
+      [Attributes.TRACER_VERSION]: VERSION,
       [Attributes.TRACER_PLATFORM]: PLATFORM,
       [Attributes.TRACER_PLATFORM_VERSION]: OTEL_VERSION,
-      [Attributes.COMPONENT_NAME]: this._serviceName,
-      [Attributes.HOSTNAME]: this._hostname,
+      [Attributes.COMPONENT_NAME]:
+        config.serviceName || `${DEFAULT_SERVICE_NAME}-${PLATFORM}`,
+      [Attributes.HOSTNAME]: config.hostname || '',
     };
+    this._createReport = createReport(
+      config.runtimeGUID || generateLongUUID(),
+      config.token,
+      attributes
+    );
+    this._sendSpans = sendSpans(config.token, url);
   }
 
   private _exportSpans(spans: ReadableSpan[]): Promise<unknown> {
     return new Promise((resolve, reject) => {
       try {
-        const startTime = spans[0].startTime;
-        const spansToBeSent: lsTypes.SpanProto[] = spans.map(span =>
-          toSpan(span)
+        this._sendSpans(
+          JSON.stringify(this._createReport(spans)),
+          resolve,
+          reject
         );
-        const body = toBuffer(
-          this._runtimeGUID,
-          this._serviceName,
-          this._version,
-          this._attributes,
-          this._authProto,
-          startTime,
-          spansToBeSent
-        );
-
-        sendSpans(body, this._url, resolve, reject);
       } catch (e) {
         reject(e);
       }
