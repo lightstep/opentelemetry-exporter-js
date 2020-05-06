@@ -1,8 +1,6 @@
 /**
- * @param buffer
+ * @param accessToken
  * @param urlToSend
- * @param onSuccess
- * @param onError
  */
 export function prepareSendSpans(
   accessToken: string,
