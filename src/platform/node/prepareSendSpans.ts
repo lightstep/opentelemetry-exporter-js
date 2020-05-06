@@ -8,7 +8,7 @@ import * as url from 'url';
  * @param accessToken
  * @param urlToSend
  */
-export function sendSpans(
+export function prepareSendSpans(
   accessToken: string,
   urlToSend: string
 ): (

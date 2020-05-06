@@ -1,2 +1,2 @@
-export * from './sendSpans';
 export * from './platform';
+export * from './prepareSendSpans';

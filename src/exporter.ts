@@ -2,7 +2,7 @@ import { ExportResult } from '@opentelemetry/base';
 import { ReadableSpan, SpanExporter } from '@opentelemetry/tracing';
 import * as ls from './types';
 import { createReportRequest } from './create-report-request';
-import { PLATFORM, sendSpans } from './platform/index';
+import { PLATFORM, prepareSendSpans } from './platform/index';
 import { generateLongUUID } from './utils';
 import { OTEL_VERSION, VERSION } from './version';
 import { Attributes } from './enums';
@@ -63,7 +63,7 @@ export class LightstepExporter implements SpanExporter {
         config.serviceName || `${DEFAULT_SERVICE_NAME}-${PLATFORM}`,
       [Attributes.HOSTNAME]: config.hostname || '',
     };
-    this._sendSpans = sendSpans(config.token, url);
+    this._sendSpans = prepareSendSpans(config.token, url);
   }
 
   private _exportSpans(spans: ReadableSpan[]): Promise<unknown> {

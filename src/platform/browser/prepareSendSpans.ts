@@ -4,7 +4,7 @@
  * @param onSuccess
  * @param onError
  */
-export function sendSpans(
+export function prepareSendSpans(
   accessToken: string,
   urlToSend: string
 ): (
