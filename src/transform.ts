@@ -74,26 +74,26 @@ function getRelationshipForLink(
 
 function getLogs(span: ReadableSpan): ls.Log[] {
   return span.events.map((ev: TimedEvent) => {
-    const fields: ls.KeyValue[] = [];
-    const attributes = ev.attributes || {};
-    Object.keys(attributes).forEach((key: string) => {
-      fields.push(new api.KeyValue({ key: key, value: attributes[key] }));
-    });
+    const fields: ls.KeyValue[] = mapToKeyValueArray(ev.attributes || {});
     fields.push(new api.KeyValue({ key: 'event', value: ev.name }));
 
     return new api.Log({
       timestamp: hrTimeToDate(ev.time),
-      fields: fields,
+      fields,
     });
   });
 }
 
 function getTags(span: ReadableSpan): ls.KeyValue[] {
-  return Object.keys(span.attributes).map(
-    (k: string) => new api.KeyValue({ key: k, value: span.attributes[k] })
-  );
+  return mapToKeyValueArray(span.attributes);
 }
 
 function hrTimeToDate(hrTime: HrTime): Date {
   return new Date(hrTimeToMilliseconds(hrTime));
+}
+
+function mapToKeyValueArray(map: { [key: string]: any }): ls.KeyValue[] {
+  return Object.keys(map).map(
+    (key: string) => new api.KeyValue({ key, value: map[key] })
+  );
 }
