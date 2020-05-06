@@ -1,15 +1,14 @@
-import { Relationship, SpanContext } from '../types';
-
-export class Reference {
-  readonly relationship: Relationship;
-  readonly spanContext: SpanContext;
+import * as ls from '../types';
+export class Reference implements ls.Reference {
+  readonly relationship: ls.Relationship;
+  readonly spanContext: ls.SpanContext;
 
   constructor({
     relationship,
     spanContext,
   }: {
-    relationship: Relationship;
-    spanContext: SpanContext;
+    relationship: ls.Relationship;
+    spanContext: ls.SpanContext;
   }) {
     this.relationship = relationship;
     this.spanContext = spanContext;

@@ -1,15 +1,14 @@
-import { KeyValue } from '../types';
-
-export class Log {
+import * as ls from '../types';
+export class Log implements ls.Log {
   readonly timestamp: Date;
-  readonly fields: KeyValue[];
+  readonly fields: ls.KeyValue[];
 
   constructor({
     timestamp,
     fields = [],
   }: {
     timestamp: Date;
-    fields?: KeyValue[];
+    fields?: ls.KeyValue[];
   }) {
     this.timestamp = timestamp;
     this.fields = fields;

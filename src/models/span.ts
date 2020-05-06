@@ -1,13 +1,13 @@
-import { KeyValue, Log, Reference, SpanContext } from '../types';
+import * as ls from '../types';
 
-export class Span {
-  readonly spanContext: SpanContext;
+export class Span implements ls.Span {
+  readonly spanContext: ls.SpanContext;
   readonly operationName: string;
-  readonly references: Reference[];
+  readonly references: ls.Reference[];
   readonly startTimestamp: Date;
   readonly durationMicros: string;
-  readonly tags: KeyValue[];
-  readonly logs: Log[];
+  readonly tags: ls.KeyValue[];
+  readonly logs: ls.Log[];
 
   constructor({
     spanContext,
@@ -18,13 +18,13 @@ export class Span {
     tags,
     logs,
   }: {
-    spanContext: SpanContext;
+    spanContext: ls.SpanContext;
     operationName: string;
-    references: Reference[];
+    references: ls.Reference[];
     startTimestamp: Date;
     durationMicros: string;
-    tags: KeyValue[];
-    logs: Log[];
+    tags: ls.KeyValue[];
+    logs: ls.Log[];
   }) {
     this.spanContext = spanContext;
     this.operationName = operationName;

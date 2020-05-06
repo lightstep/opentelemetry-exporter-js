@@ -1,9 +1,9 @@
-import { Auth, Reporter, Span } from '../types';
+import * as ls from '../types';
 
-export class ReportRequest {
-  readonly reporter: Reporter;
-  readonly auth: Auth;
-  readonly spans: Span[];
+export class ReportRequest implements ls.ReportRequest {
+  readonly reporter: ls.Reporter;
+  readonly auth: ls.Auth;
+  readonly spans: ls.Span[];
   readonly timestampOffsetMicros: string;
 
   constructor({
@@ -12,9 +12,9 @@ export class ReportRequest {
     spans,
     timestampOffsetMicros,
   }: {
-    reporter: Reporter;
-    auth: Auth;
-    spans: Span[];
+    reporter: ls.Reporter;
+    auth: ls.Auth;
+    spans: ls.Span[];
     timestampOffsetMicros: string;
   }) {
     this.reporter = reporter;

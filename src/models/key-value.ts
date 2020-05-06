@@ -1,4 +1,5 @@
-export class KeyValue {
+import * as ls from '../types';
+export class KeyValue implements ls.KeyValue {
   readonly key: string;
   readonly stringValue?: string;
   readonly intValue?: string;
