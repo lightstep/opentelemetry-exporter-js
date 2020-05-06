@@ -12,6 +12,6 @@ describe('createReportRequest', () => {
       spanWithParent,
     ]);
 
-    assert.strictEqual(JSON.stringify(result), reportJSON, 'wrong buffer');
+    assert.deepEqual(result, reportJSON, 'wrong report');
   });
 });

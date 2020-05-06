@@ -12,16 +12,12 @@ describe('transform', () => {
   describe('toSpan', () => {
     it('should convert Span to LS Span', () => {
       const result: ls.Span = transform.toSpan(spanWithoutParent);
-      assert.strictEqual(JSON.stringify(result), spanJSON, 'wrong span');
+      assert.deepEqual(result, spanJSON, 'wrong span');
     });
 
-    it('should convert Span with parent to SpanProto', () => {
+    it('should convert Span with parent to LS Span', () => {
       const result: ls.Span = transform.toSpan(spanWithParent);
-      assert.strictEqual(
-        JSON.stringify(result),
-        spanWithParentJSON,
-        'wrong span'
-      );
+      assert.deepEqual(result, spanWithParentJSON, 'wrong span');
     });
   });
 });

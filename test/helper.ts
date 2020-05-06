@@ -7,8 +7,8 @@ export const spanWithoutParent: ReadableSpan = {
   name: 'test1',
   kind: 0,
   spanContext: {
-    traceId: '123',
-    spanId: '456',
+    traceId: 'a431ce0a337e42c430d5653f35850a9b',
+    spanId: '7b6d0677c22ba51c',
     traceFlags: TraceFlags.SAMPLED,
   },
   startTime: [123, 456000000],
@@ -23,8 +23,8 @@ export const spanWithoutParent: ReadableSpan = {
   links: [
     {
       context: {
-        traceId: '111',
-        spanId: '222',
+        traceId: '7dc36f505d42e7d0c4d45a90d79f00b1',
+        spanId: '0301fbb96d6ea326',
       },
     },
   ],
@@ -46,16 +46,171 @@ export const spanWithParent: ReadableSpan = Object.assign(
   {},
   spanWithoutParent,
   {
-    parentSpanId: '222',
+    parentSpanId: '20d8e7972bb89572',
   }
 );
 
-export const spanJSON =
-  '{"spanContext":{"traceId":"","spanId":"1110"},"operationName":"test1","references":[{"relationship":"FOLLOWS_FROM","spanContext":{"traceId":"","spanId":"546"}}],"startTimestamp":"1970-01-01T00:02:03.456Z","durationMicros":"1044000","tags":[{"key":"atr1","stringValue":"val1"},{"key":"atr2","stringValue":"val2"}],"logs":[{"timestamp":"1970-01-01T00:02:03.555Z","fields":[{"key":"foo","stringValue":"bla"},{"key":"event","stringValue":"foo"}]}]}';
-export const spanWithParentJSON =
-  '{"spanContext":{"traceId":"","spanId":"1110"},"operationName":"test1","references":[{"relationship":"CHILD_OF","spanContext":{"traceId":"","spanId":"546"}},{"relationship":"CHILD_OF","spanContext":{"traceId":"","spanId":"546"}}],"startTimestamp":"1970-01-01T00:02:03.456Z","durationMicros":"1044000","tags":[{"key":"atr1","stringValue":"val1"},{"key":"atr2","stringValue":"val2"}],"logs":[{"timestamp":"1970-01-01T00:02:03.555Z","fields":[{"key":"foo","stringValue":"bla"},{"key":"event","stringValue":"foo"}]}]}';
-export const reportJSON =
-  '{"reporter":{"reporterId":"1311862288733744077","tags":[{"key":"foo","stringValue":"bar"}]},"auth":{"accessToken":"dkasjdalsjdlaksjdkaskldj"},"spans":[{"spanContext":{"traceId":"","spanId":"1110"},"operationName":"test1","references":[{"relationship":"CHILD_OF","spanContext":{"traceId":"","spanId":"546"}},{"relationship":"CHILD_OF","spanContext":{"traceId":"","spanId":"546"}}],"startTimestamp":"1970-01-01T00:02:03.456Z","durationMicros":"1044000","tags":[{"key":"atr1","stringValue":"val1"},{"key":"atr2","stringValue":"val2"}],"logs":[{"timestamp":"1970-01-01T00:02:03.555Z","fields":[{"key":"foo","stringValue":"bla"},{"key":"event","stringValue":"foo"}]}]}],"timestampOffsetMicros":"0"}';
+export const spanJSON = {
+  spanContext: {
+    traceId: '3518830006015167131',
+    spanId: '8893771950555112732',
+  },
+  operationName: 'test1',
+  references: [
+    {
+      relationship: 'FOLLOWS_FROM',
+      spanContext: {
+        traceId: '14183060704635846833',
+        spanId: '216731030913983270',
+      },
+    },
+  ],
+  startTimestamp: new Date(123456),
+  durationMicros: '1044000',
+  tags: [
+    {
+      key: 'atr1',
+      stringValue: 'val1',
+    },
+    {
+      key: 'atr2',
+      stringValue: 'val2',
+    },
+  ],
+  logs: [
+    {
+      timestamp: new Date(123555),
+      fields: [
+        {
+          key: 'foo',
+          stringValue: 'bla',
+        },
+        {
+          key: 'event',
+          stringValue: 'foo',
+        },
+      ],
+    },
+  ],
+};
+export const spanWithParentJSON = {
+  spanContext: {
+    traceId: '3518830006015167131',
+    spanId: '8893771950555112732',
+  },
+  operationName: 'test1',
+  references: [
+    {
+      relationship: 'CHILD_OF',
+      spanContext: {
+        traceId: '3518830006015167131',
+        spanId: '2366896240642790770',
+      },
+    },
+    {
+      relationship: 'FOLLOWS_FROM',
+      spanContext: {
+        traceId: '14183060704635846833',
+        spanId: '216731030913983270',
+      },
+    },
+  ],
+  startTimestamp: new Date(123456),
+  durationMicros: '1044000',
+  tags: [
+    {
+      key: 'atr1',
+      stringValue: 'val1',
+    },
+    {
+      key: 'atr2',
+      stringValue: 'val2',
+    },
+  ],
+  logs: [
+    {
+      timestamp: new Date(123555),
+      fields: [
+        {
+          key: 'foo',
+          stringValue: 'bla',
+        },
+        {
+          key: 'event',
+          stringValue: 'foo',
+        },
+      ],
+    },
+  ],
+};
+
+export const reportJSON = {
+  reporter: {
+    reporterId: '1311862288733744077',
+    tags: [
+      {
+        key: 'foo',
+        stringValue: 'bar',
+      },
+    ],
+  },
+  auth: {
+    accessToken: 'dkasjdalsjdlaksjdkaskldj',
+  },
+  spans: [
+    {
+      spanContext: {
+        traceId: '3518830006015167131',
+        spanId: '8893771950555112732',
+      },
+      operationName: 'test1',
+      references: [
+        {
+          relationship: 'CHILD_OF',
+          spanContext: {
+            traceId: '3518830006015167131',
+            spanId: '2366896240642790770',
+          },
+        },
+        {
+          relationship: 'FOLLOWS_FROM',
+          spanContext: {
+            traceId: '14183060704635846833',
+            spanId: '216731030913983270',
+          },
+        },
+      ],
+      startTimestamp: new Date(123456),
+      durationMicros: '1044000',
+      tags: [
+        {
+          key: 'atr1',
+          stringValue: 'val1',
+        },
+        {
+          key: 'atr2',
+          stringValue: 'val2',
+        },
+      ],
+      logs: [
+        {
+          timestamp: new Date(123555),
+          fields: [
+            {
+              key: 'foo',
+              stringValue: 'bla',
+            },
+            {
+              key: 'event',
+              stringValue: 'foo',
+            },
+          ],
+        },
+      ],
+    },
+  ],
+  timestampOffsetMicros: '0',
+};
 
 export const assertValidPostBody = (body: string) => {
   const result = JSON.parse(body);
