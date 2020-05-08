@@ -31,7 +31,7 @@ export function createReportRequestFn(
     return (reporter = new api.Reporter({
       reporterId: hexToDec(runtimeGUID),
       tags: Object.keys(attributes).map(
-        (key) => new api.KeyValue({ key, value: attributes[key] })
+        key => new api.KeyValue({ key, value: attributes[key] })
       ),
     }));
   }
