@@ -1,6 +1,6 @@
 import * as ls from './types';
 import * as api from './models';
-import { toSpan } from './transform';
+import { mapToKeyValueArray, toSpan } from './transform';
 import { hexToDec } from './utils';
 import { ReadableSpan } from '@opentelemetry/tracing';
 
@@ -30,9 +30,7 @@ export function createReportRequestFn(
   function setReporter(attributes: { [key: string]: any }): ls.Reporter {
     return (reporter = new api.Reporter({
       reporterId: hexToDec(runtimeGUID),
-      tags: Object.keys(attributes).map(
-        key => new api.KeyValue({ key, value: attributes[key] })
-      ),
+      tags: mapToKeyValueArray(attributes),
     }));
   }
 

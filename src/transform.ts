@@ -8,7 +8,7 @@ import {
 } from '@opentelemetry/core';
 import { HrTime, Link, SpanContext, TimedEvent } from '@opentelemetry/api';
 
-export function toSpan(span: ReadableSpan): ls.Span {
+function toSpan(span: ReadableSpan): ls.Span {
   return new api.Span({
     operationName: span.name,
     startTimestamp: hrTimeToDate(span.startTime),
@@ -97,3 +97,5 @@ function mapToKeyValueArray(map: { [key: string]: any }): ls.KeyValue[] {
     (key: string) => new api.KeyValue({ key, value: map[key] })
   );
 }
+
+export { mapToKeyValueArray, toSpan };
