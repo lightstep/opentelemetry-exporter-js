@@ -2,7 +2,7 @@
  * @param accessToken
  * @param urlToSend
  */
-export function prepareSendSpans(
+export function sendSpansFn(
   accessToken: string,
   urlToSend: string
 ): (

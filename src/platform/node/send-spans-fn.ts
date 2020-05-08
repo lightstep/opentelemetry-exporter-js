@@ -5,10 +5,12 @@ import { IncomingMessage } from 'http';
 import * as url from 'url';
 
 /**
+ * Creates and returns a suitable sendSpans function for browser
+ *
  * @param accessToken
  * @param urlToSend
  */
-export function prepareSendSpans(
+export function sendSpansFn(
   accessToken: string,
   urlToSend: string
 ): (
