@@ -4,7 +4,7 @@ import * as assert from 'assert';
 import * as sinon from 'sinon';
 import { LightstepExporter, LightstepExporterConfig } from '../../src/exporter';
 
-import { spanWithoutParent } from '../helper';
+import { assertValidPostBody, spanWithoutParent } from '../helper';
 
 const fakeRequest = {
   end: function() {},
@@ -55,8 +55,7 @@ describe('LightstepExporter - node', () => {
       exporter.export(spans, function() {});
 
       setTimeout(() => {
-        const writeArgs = spyWrite.args[0][0];
-        assert.ok(writeArgs.length === 508);
+        assertValidPostBody(spyWrite.args[0][0]);
         done();
       });
     });

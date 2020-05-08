@@ -3,7 +3,7 @@ import * as assert from 'assert';
 import * as sinon from 'sinon';
 import { LightstepExporter, LightstepExporterConfig } from '../../src/exporter';
 
-import { spanWithoutParent } from '../helper';
+import { assertValidPostBody, spanWithoutParent } from '../helper';
 const sendBeacon = navigator.sendBeacon;
 
 describe('LightstepExporter - web', () => {
@@ -37,7 +37,7 @@ describe('LightstepExporter - web', () => {
           const args = spyBeacon.args[0];
           const url = args[0];
           const body = args[1];
-          assert.ok(body.length === 514);
+          assertValidPostBody(body);
           assert.strictEqual(url, 'http://foo.bar.com/api/v2/reports');
           assert.strictEqual(spyBeacon.callCount, 1);
 
@@ -65,7 +65,7 @@ describe('LightstepExporter - web', () => {
           const url = request.url;
           const body = request.requestBody;
 
-          assert.ok(body.length === 514);
+          assertValidPostBody(body);
           assert.strictEqual(url, 'http://foo.bar.com/api/v2/reports');
           assert.strictEqual(spyBeacon.callCount, 0);
           assert.strictEqual(request.method, 'POST');
