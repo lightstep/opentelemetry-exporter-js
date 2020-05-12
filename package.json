@@ -1,7 +1,7 @@
 {
   "name": "lightstep-opentelemetry-exporter",
   "description": "OpenTelemetry Exporter for LightStep",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "main": "build/src/index.js",
   "types": "build/src/index.d.ts",
   "browser": {
@@ -22,6 +22,7 @@
     "release": "./scripts/release.sh",
     "start": "node example/node.js",
     "start:browser": "webpack-dev-server -d --progress --colors --port 8091 --config webpack.config.js --no-inline --host 0.0.0.0 --content-base example",
+    "tag": "./scripts/prepare_tag.sh",
     "tdd": "yarn test -- --watch-extensions ts --watch",
     "tdd:browser": "karma start",
     "test": "nyc ts-mocha -p tsconfig.json 'test/**/*.ts' --exclude 'test/browser/**/*.ts'",

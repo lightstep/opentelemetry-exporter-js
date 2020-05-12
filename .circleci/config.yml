@@ -34,10 +34,10 @@ jobs:
           command: npm run lint
       - run:
           name: Run tests
-          command: npm test
+          command: npm run test
       - run:
           name: Run tests in browser
-          command: npm test:browser
+          command: npm run test:browser
   deploy:
     <<: *defaults
     steps:
