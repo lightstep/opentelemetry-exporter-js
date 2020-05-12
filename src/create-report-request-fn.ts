@@ -13,8 +13,8 @@ import { ReadableSpan } from '@opentelemetry/tracing';
  */
 export function createReportRequestFn(
   runtimeGUID: string,
-  accessToken: string,
-  reporterTags: { [key: string]: any }
+  reporterTags: { [key: string]: any },
+  accessToken?: string
 ): (spans: ReadableSpan[]) => ls.ReportRequest {
   const auth: ls.Auth = new api.Auth({ accessToken });
   let reporter: ls.Reporter;

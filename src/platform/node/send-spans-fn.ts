@@ -11,37 +11,37 @@ import * as url from 'url';
  * @param urlToSend
  */
 export function sendSpansFn(
-  accessToken: string,
-  urlToSend: string
+  urlToSend: string,
+  accessToken?: string
 ): (
   body: string,
   onSuccess: () => void,
   onError: (status?: number) => void
 ) => void {
-  const _parsedUrl = url.parse(urlToSend);
-  const _headers: { [key: string]: any } = {
+  const parsedUrl = url.parse(urlToSend);
+  const headers: { [key: string]: any } = {
     Accept: 'application/json',
     'Content-Type': 'application/json',
-    'LightStep-Access-Token': accessToken,
   };
-  const _options = {
-    hostname: _parsedUrl.hostname,
-    port: _parsedUrl.port,
-    path: _parsedUrl.path,
+  if (accessToken) headers['LightStep-Access-Token'] = accessToken;
+
+  const options = {
+    hostname: parsedUrl.hostname,
+    port: parsedUrl.port,
+    path: parsedUrl.path,
     method: 'POST',
-    headers: _headers,
+    headers: headers,
   };
-  const request =
-    _parsedUrl.protocol === 'http:' ? http.request : https.request;
+  const request = parsedUrl.protocol === 'http:' ? http.request : https.request;
 
   return function(
     body: string,
     onSuccess: () => void,
     onError: (status?: number) => void
   ) {
-    _headers['Content-Length'] = Buffer.byteLength(body);
+    headers['Content-Length'] = Buffer.byteLength(body);
 
-    const req = request(_options, (res: IncomingMessage) => {
+    const req = request(options, (res: IncomingMessage) => {
       if (res.statusCode && res.statusCode < 299) {
         onSuccess();
       } else {

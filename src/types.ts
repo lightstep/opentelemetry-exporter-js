@@ -2,7 +2,7 @@
  * An interface representing Auth.
  */
 export interface Auth {
-  readonly accessToken: string;
+  readonly accessToken?: string;
 }
 
 /**

@@ -19,7 +19,7 @@ export interface LightstepExporterConfig {
   serviceName?: string;
   hostname?: string;
   runtimeGUID?: string;
-  token: string;
+  token?: string;
   collector_host?: string;
   collector_port?: number;
   collector_path?: string;
@@ -37,18 +37,11 @@ export class LightstepExporter implements SpanExporter {
   ) => void;
   private _shutdown = false;
 
-  constructor(config: LightstepExporterConfig) {
-    if (!config) {
-      throw 'Missing config';
-    }
-    if (!config.token) {
-      throw 'Missing token';
-    }
+  constructor(config: LightstepExporterConfig = {}) {
     const host = config.collector_host || DEFAULT_SATELLITE_HOST;
     const port =
-      config.collector_port || host.indexOf('https://') === 0
-        ? DEFAULT_SATELLITE_PORT
-        : '';
+      config.collector_port ||
+      (host.indexOf('https://') === 0 ? DEFAULT_SATELLITE_PORT : '');
     const path = config.collector_path || DEFAULT_SATELLITE_PATH;
     const url = `${host}${port ? `:${port}` : ''}${path}`;
     const attributes = {
@@ -61,10 +54,10 @@ export class LightstepExporter implements SpanExporter {
     };
     this._createReportRequest = createReportRequestFn(
       config.runtimeGUID || generateLongUUID(),
-      config.token,
-      attributes
+      attributes,
+      config.token
     );
-    this._sendSpans = sendSpansFn(config.token, url);
+    this._sendSpans = sendSpansFn(url, config.token);
   }
 
   private _exportSpans(spans: ReadableSpan[]): Promise<unknown> {

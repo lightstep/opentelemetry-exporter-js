@@ -10,8 +10,8 @@ describe('createReportRequest', () => {
     const tags = { foo: 'bar' };
     const result: ls.ReportRequest = createReportRequestFn(
       guid,
-      token,
-      tags
+      tags,
+      token
     )([spanWithParent]);
 
     assert.deepEqual(result, reportJSON, 'wrong report');
