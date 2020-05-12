@@ -6,70 +6,67 @@ if ! git diff-index --quiet HEAD --; then
   echo ""
   exit 0
 fi
-newTag="$1";
+newTag="$1"
 
 echo  "Fetching tags ..."
 git fetch --tags
 
 if [ -z "$1" ]; then
-  lastTag=`git tag | grep -E '^v\d+.+' | tail -1`;
+  lastTag=`git tag | grep -E '^v\d+.+' | tail -1`
   if [ -z "$lastTag" ]; then
     newTag="v0.1"
-    echo "No previous tag found, using default: $newTag";
+    echo "No previous tag found, using default: $newTag"
   else
-    version=`echo $lastTag | grep -Eo '\.{1}[0-9]+$'`;
-    oldVersion=`echo $lastTag | grep -Eo '[0-9]+$'`;
-    newVersion=".$(($oldVersion + 1))";
-    newTag="${lastTag/$version/$newVersion}"
+    # for example v0.1
+    version1=`echo $lastTag | grep -Eo '\.{1}[0-9]+$'`
+    # for example v0.1.1
+    version2=`echo $lastTag | grep -Eo '[0-9]+\.{1}[0-9]+$'`
+    oldVersion=`echo $lastTag | grep -Eo '[0-9]+$'`
+    newVersion=".$(($oldVersion + 1))"
+    if [ -z "$version2" ]; then
+      # for example v0.1
+      newTag="${lastTag/$version1/$newVersion}"
+    else
+      # for example v0.1.1
+      newVersion2="${version2/$version1/$newVersion}"
+      newTag="${lastTag/$version2/$newVersion2}"
+    fi
   fi
 else
-  existingTag=`git tag | grep -E "^$newTag$"`;
-  echo "tutaj $newTag -> $existingTag"
+  existingTag=`git tag | grep -E "^$newTag$"`
   if [ ! -z "$existingTag" ]; then
     echo "Tag \"$newTag\" already exists, please choose another"
-    exit;
+    exit
   fi
   echo "Will use tag \"$newTag\" from input"
 fi
 
 echo  "Checking npm version ..."
-checkNpm=`node "./scripts/check-npm.js"`;
+checkNpm=`node "./scripts/check-npm.js"`
 exitCode="$?"
 
 if [ "$exitCode" = "0" ]; then
   echo "Current version to be released \"$checkNpm\" with tag \"$newTag"
-  echo "Do you want to create now a new tag with name \"$newTag\" ?"
 else
-  echo "ERROR";
-  echo "$checkNpm";
-  echo "No tag has been created";
-  echo "Please fix the error and try again";
-  exit;
+  echo "ERROR"
+  echo "$checkNpm"
+  echo "No tag has been created"
+  echo "Please fix the error and try again"
+  exit
 fi
 
-echo "Please choose \"1\" to proceed"
-choices=("Yes" "No")
-select choice in ${choices[@]}
-do
-    echo $choice
-    break
-done
-
-if [ "$choice" = "Yes" ]; then
-  git tag $newTag;
-  echo "New tag \"$newTag\" created";
-fi
-
-echo "Do you want to push the \"$newTag tag to trigger automatic release now?"
+echo "Do you want to create and push the \"$newTag tag to trigger automatic release now?"
 echo "Please choose \"1\" to proceed"
 choices=("Yes" "No")
 select choiceRelease in ${choices[@]}
 do
-    echo $choice
+    echo $choiceRelease
     break
 done
 
 if [ "$choiceRelease" = "Yes" ]; then
+  git tag $newTag
+  echo "New tag \"$newTag\" created"
   git push origin "$newTag"
 fi
 
