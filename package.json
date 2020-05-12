@@ -19,6 +19,7 @@
     "lint:fix": "gts fix",
     "precompile": "tsc --version",
     "prepare": "npm run compile",
+    "release": "./scripts/release.sh",
     "start": "node example/node.js",
     "start:browser": "webpack-dev-server -d --progress --colors --port 8091 --config webpack.config.js --no-inline --host 0.0.0.0 --content-base example",
     "tdd": "yarn test -- --watch-extensions ts --watch",
