@@ -25,7 +25,7 @@ describe('LightstepExporter - node', () => {
       exporterConfig = {
         token: 'abc',
         serviceName: 'bar',
-        collector_host: 'http://foo.bar.com',
+        collectorUrl: 'http://foo.bar.com',
       };
       exporter = new LightstepExporter(exporterConfig);
       spans = [];

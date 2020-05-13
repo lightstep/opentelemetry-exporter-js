@@ -6,12 +6,14 @@ import { PLATFORM, sendSpansFn } from './platform/index';
 import { generateLongUUID } from './utils';
 import { OTEL_VERSION, VERSION } from './version';
 import { Attributes } from './enums';
+import * as url from 'url';
 
 const DEFAULT_SERVICE_NAME = 'otel-lightstep-exporter';
-const DEFAULT_SATELLITE_HOST = 'https://collector.lightstep.com';
+const DEFAULT_SATELLITE_PROTOCOL = 'https:';
+const DEFAULT_SATELLITE_HOST = 'collector.lightstep.com';
 const DEFAULT_SATELLITE_PORT = '443';
 const DEFAULT_SATELLITE_PATH = '/api/v2/reports';
-
+const DEFAULT_INGEST_URL = `${DEFAULT_SATELLITE_PROTOCOL}//${DEFAULT_SATELLITE_HOST}:${DEFAULT_SATELLITE_PORT}${DEFAULT_SATELLITE_PATH}`;
 /**
  * Lightstep Exporter Config
  */
@@ -20,9 +22,7 @@ export interface LightstepExporterConfig {
   hostname?: string;
   runtimeGUID?: string;
   token?: string;
-  collector_host?: string;
-  collector_port?: number;
-  collector_path?: string;
+  collectorUrl?: string;
 }
 
 /**
@@ -38,12 +38,7 @@ export class LightstepExporter implements SpanExporter {
   private _shutdown = false;
 
   constructor(config: LightstepExporterConfig = {}) {
-    const host = config.collector_host || DEFAULT_SATELLITE_HOST;
-    const port =
-      config.collector_port ||
-      (host.indexOf('https://') === 0 ? DEFAULT_SATELLITE_PORT : '');
-    const path = config.collector_path || DEFAULT_SATELLITE_PATH;
-    const url = `${host}${port ? `:${port}` : ''}${path}`;
+    const url = this._urlFromConfig(config);
     const attributes = {
       [Attributes.TRACER_VERSION]: VERSION,
       [Attributes.TRACER_PLATFORM]: PLATFORM,
@@ -58,6 +53,27 @@ export class LightstepExporter implements SpanExporter {
       config.token
     );
     this._sendSpans = sendSpansFn(url, config.token);
+  }
+
+  private _urlFromConfig(config: LightstepExporterConfig) {
+    if (!config.collectorUrl) {
+      return DEFAULT_INGEST_URL;
+    }
+
+    if (!config.collectorUrl.startsWith('http'))
+      config.collectorUrl = `${DEFAULT_SATELLITE_PROTOCOL}//${config.collectorUrl}`;
+
+    const parsedUrl = url.parse(config.collectorUrl);
+    const protocol = parsedUrl.protocol || DEFAULT_SATELLITE_PROTOCOL;
+    const host = parsedUrl.hostname || DEFAULT_SATELLITE_HOST;
+    const port =
+      parsedUrl.port || (protocol === 'https:' ? DEFAULT_SATELLITE_PORT : '');
+    const path =
+      !parsedUrl.path || parsedUrl.path === '/'
+        ? DEFAULT_SATELLITE_PATH
+        : parsedUrl.path;
+
+    return `${protocol}//${host}${port ? `:${port}` : ''}${path}`;
   }
 
   private _exportSpans(spans: ReadableSpan[]): Promise<unknown> {
