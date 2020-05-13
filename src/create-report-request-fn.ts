@@ -8,8 +8,8 @@ import { ReadableSpan } from '@opentelemetry/tracing';
  * Creates and returns a createReportRequest function
  *
  * @param runtimeGUID
- * @param accessToken
  * @param reporterTags
+ * @param accessToken
  */
 export function createReportRequestFn(
   runtimeGUID: string,

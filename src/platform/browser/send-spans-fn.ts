@@ -1,6 +1,6 @@
 /**
- * @param accessToken
  * @param urlToSend
+ * @param accessToken
  */
 export function sendSpansFn(
   urlToSend: string,

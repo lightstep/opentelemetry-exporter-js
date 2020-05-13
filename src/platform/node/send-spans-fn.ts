@@ -7,8 +7,8 @@ import * as url from 'url';
 /**
  * Creates and returns a suitable sendSpans function for browser
  *
- * @param accessToken
  * @param urlToSend
+ * @param accessToken
  */
 export function sendSpansFn(
   urlToSend: string,
@@ -30,7 +30,7 @@ export function sendSpansFn(
     port: parsedUrl.port,
     path: parsedUrl.path,
     method: 'POST',
-    headers: headers,
+    headers,
   };
   const request = parsedUrl.protocol === 'http:' ? http.request : https.request;
 
