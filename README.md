@@ -64,3 +64,28 @@ make clone
 ```
 make proto
 ```
+
+
+### Release process
+1. Create a new tag in format `v*` for example `v0.2`
+```commandline
+git tag v0.2
+```
+2. Push tag to repo 
+```commandline
+git push origin v0.2
+```
+
+### Release process using auto script and auto detecting for next tag 
+1. Run command
+```commandline
+npm run tag
+```
+2. Follow the instructions
+
+### Release process using auto script and providing custom tag 
+1. Run command
+```commandline
+npm run tag v0.2
+```
+2. Follow the instructions

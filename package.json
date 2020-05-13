@@ -1,7 +1,7 @@
 {
   "name": "lightstep-opentelemetry-exporter",
   "description": "OpenTelemetry Exporter for LightStep",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "main": "build/src/index.js",
   "types": "build/src/index.d.ts",
   "browser": {
@@ -19,8 +19,10 @@
     "lint:fix": "gts fix",
     "precompile": "tsc --version",
     "prepare": "npm run compile",
+    "release": "./scripts/release.sh",
     "start": "node example/node.js",
     "start:browser": "webpack-dev-server -d --progress --colors --port 8091 --config webpack.config.js --no-inline --host 0.0.0.0 --content-base example",
+    "tag": "./scripts/prepare_tag.sh",
     "tdd": "yarn test -- --watch-extensions ts --watch",
     "tdd:browser": "karma start",
     "test": "nyc ts-mocha -p tsconfig.json 'test/**/*.ts' --exclude 'test/browser/**/*.ts'",
@@ -78,6 +80,7 @@
     "karma-webpack": "^4.0.2",
     "mocha": "^7.0.1",
     "nyc": "^15.0.0",
+    "package-json": "^6.5.0",
     "rimraf": "^3.0.1",
     "sinon": "^8.1.1",
     "ts-loader": "^6.2.1",

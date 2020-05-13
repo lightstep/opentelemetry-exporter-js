@@ -1,27 +1,90 @@
-version: 2
+version: 2.1
+
+defaults: &defaults
+  working_directory: ~/repo
+  docker:
+    - image: circleci/node:12-browsers
 
 jobs:
-  test:
-    docker:
-      - image: circleci/node:12-browsers
+  checkout:
+    <<: *defaults
     steps:
       - checkout
       - restore_cache:
           keys:
-            - node-v1-{{ .Branch }}-{{ checksum "package-lock.json" }}
-            - node-v1-{{ .Branch }}-
-            - node-v1-
+            - v1-dependencies-{{ checksum "package.json" }}
+            - v1-dependencies-
+
       - run: npm install
       - save_cache:
           paths:
-            - ~/project/node_modules
-          key: node-v1-{{ .Branch }}-{{ checksum "package-lock.json" }}
-      - run: npm run lint
-      - run: npm run test
-      - run: npm run test:browser
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+
+      - persist_to_workspace:
+          root: ~/repo
+          paths: .
+  lint_test:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/repo
+      - run:
+          name: Run lint
+          command: npm run lint
+      - run:
+          name: Run tests
+          command: npm run test
+      - run:
+          name: Run tests in browser
+          command: npm run test:browser
+  deploy:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/repo
+      - run:
+          name: Authenticate with registry
+          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/repo/.npmrc
+      - run:
+          name: Publish package
+          command: npm run release
 
 workflows:
   version: 2
-  test:
+  build:
     jobs:
-      - test
+      - checkout:
+          filters:
+            branches:
+              only: /.*/
+      - lint_test:
+          filters:
+            branches:
+              only: /.*/
+          requires:
+            - checkout
+  release:
+    jobs:
+      - checkout:
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
+      - lint_test:
+          requires:
+            - checkout
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
+      - deploy:
+          requires:
+            - lint_test
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
