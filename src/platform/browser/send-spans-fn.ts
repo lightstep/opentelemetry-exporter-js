@@ -1,10 +1,10 @@
 /**
- * @param accessToken
  * @param urlToSend
+ * @param accessToken
  */
 export function sendSpansFn(
-  accessToken: string,
-  urlToSend: string
+  urlToSend: string,
+  accessToken?: string
 ): (
   body: string,
   onSuccess: () => void,
@@ -42,7 +42,8 @@ export function sendSpansFn(
     xhr.open('POST', urlToSend);
     xhr.setRequestHeader('Accept', 'application/json');
     xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.setRequestHeader('LightStep-Access-Token', accessToken);
+    if (accessToken)
+      xhr.setRequestHeader('LightStep-Access-Token', accessToken);
     xhr.onreadystatechange = () => {
       if (xhr.readyState === XMLHttpRequest.DONE) {
         if (xhr.status >= 200 && xhr.status <= 299) {
