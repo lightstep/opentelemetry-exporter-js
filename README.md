@@ -67,7 +67,7 @@ make proto
 
 
 ### Release process using circleCI 
-1. Run command
+1. Run command (patch, minor, major)
 ```commandline
 make release RELEASE_TYPE=patch
 ```

@@ -20,6 +20,7 @@
     "precompile": "tsc --version",
     "prepare": "npm run compile",
     "release": "./scripts/release.sh",
+    "release:prepare": "./scripts/release-prepare.sh",
     "start": "node example/node.js",
     "start:browser": "webpack-dev-server -d --progress --colors --port 8091 --config webpack.config.js --no-inline --host 0.0.0.0 --content-base example",
     "tag": "./scripts/prepare_tag.sh",
