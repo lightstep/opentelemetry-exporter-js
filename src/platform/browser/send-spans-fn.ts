@@ -61,7 +61,7 @@ export function sendSpansFn(
     onSuccess: () => void,
     onError: (status?: number) => void
   ) {
-    if (typeof navigator.sendBeacon === 'function') {
+    if (typeof navigator.sendBeacon === 'function' && !accessToken) {
       sendSpansWithBeacon(body, onSuccess, onError);
     } else {
       sendSpansWithXhr(body, onSuccess, onError);
